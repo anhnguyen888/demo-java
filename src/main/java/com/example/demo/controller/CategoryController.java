@@ -5,8 +5,10 @@ import com.example.demo.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -57,8 +60,9 @@ public class CategoryController {
 
         if (!imageFile.isEmpty()) {
             try {
-                String imageName = saveImage(imageFile);
-                category.setThumnail(imageName);
+                String imageName = saveImageStatic(imageFile);
+//                category.setThumnail(imageName);
+                category.setThumnail("/images/" +imageName);
             } catch (IOException e) {
                 e.printStackTrace();
                 // Handle the error appropriately
@@ -67,6 +71,21 @@ public class CategoryController {
 
         categoryService.addCategory(category);
         return "redirect:/categories";
+    }
+
+
+    private String saveImageStatic(MultipartFile image) throws IOException {
+        File saveFile = new ClassPathResource("static/images").getFile();
+
+        if (!saveFile.exists()) {
+            saveFile.mkdirs();
+        }
+
+
+        String fileName = UUID.randomUUID()+ "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
+        Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + fileName);
+        Files.copy(image.getInputStream(), path);
+        return fileName;
     }
 
     private String saveImage(MultipartFile imageFile) throws IOException {

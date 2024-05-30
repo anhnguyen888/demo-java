@@ -24,7 +24,7 @@
             <td th:text="${category.id}"></td>
             <td th:text="${category.name}"></td>
             <td>
-                <img th:src="@{'/category-images/' + ${category.thumnail}}" alt="Category Image" style="max-width: 100px; max-height: 100px;">
+                <img th:src="@{${category.thumnail}}" alt="Category Image" style="max-width: 100px; max-height: 100px;">
             </td>
             <td>
                 <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-success btn-sm">Edit</a>
