@@ -57,83 +57,25 @@ public class CategoryController {
         if (result.hasErrors()) {
             return "/categories/add-category";
         }
-
         if (!imageFile.isEmpty()) {
             try {
                 String imageName = saveImageStatic(imageFile);
-//                category.setThumnail(imageName);
                 category.setThumnail("/images/" +imageName);
             } catch (IOException e) {
                 e.printStackTrace();
-                // Handle the error appropriately
             }
         }
-
         categoryService.addCategory(category);
         return "redirect:/categories";
     }
 
-
     private String saveImageStatic(MultipartFile image) throws IOException {
         File saveFile = new ClassPathResource("static/images").getFile();
-
-        if (!saveFile.exists()) {
-            saveFile.mkdirs();
-        }
-
-
         String fileName = UUID.randomUUID()+ "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
         Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + fileName);
         Files.copy(image.getInputStream(), path);
         return fileName;
     }
-
-    private String saveImage(MultipartFile imageFile) throws IOException {
-
-        // Đường dẫn tuyệt đối tới thư mục lưu trữ hình ảnh
-        String uploadDir = System.getProperty("user.dir") + "/category-images/";
-        // Đường dẫn tương đối tới thư mục lưu trữ hình ảnh
-//        String uploadDir = "category-images/";
-
-        // Tạo thư mục nếu chưa tồn tại
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-
-        String originalFilename = imageFile.getOriginalFilename();
-        String imagePath = uploadDir + originalFilename;
-        File dest = new File(imagePath);
-        imageFile.transferTo(dest);
-        return originalFilename;
-    }
-
-//    private String saveImage(MultipartFile imageFile) throws IOException {
-//        // Tạo thư mục nếu chưa tồn tại
-//        String uploadDir = "category-images/";
-//        Path uploadPath = Paths.get(uploadDir);
-//        if (!Files.exists(uploadPath)) {
-//            Files.createDirectories(uploadPath);
-//        }
-//
-//        String originalFilename = imageFile.getOriginalFilename();
-//        String imagePath = uploadDir + originalFilename;
-//        File dest = new File(imagePath);
-//        imageFile.transferTo(dest);
-//        return originalFilename;
-//    }
-
-//    // Helper method to save the image
-//    private String saveImage(MultipartFile imageFile) throws IOException {
-//        String uploadDir = "category-images/";
-//        String originalFilename = imageFile.getOriginalFilename();
-//        String imagePath = uploadDir + originalFilename;
-//        File dest = new File(imagePath);
-//        imageFile.transferTo(dest);
-//        return originalFilename;
-//    }
-
-
 
     // Hiển thị danh sách danh mục
     @GetMapping("/categories")
