@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Form Sinh Viên</title>
+</head>
+<body>
+<h1>Form Sinh Viên</h1>
+<form th:action="@{/sinhvien}" th:object="${sinhVien}" method="post">
+    <p>Tên: <input type="text" th:field="*{ten}" /></p>
+    <p th:if="${#fields.hasErrors('ten')}" th:errors="*{ten}" style="color:red;"></p>
+    <p>Tuổi: <input type="text" th:field="*{tuoi}" /></p>
+    <p th:if="${#fields.hasErrors('tuoi')}" th:errors="*{tuoi}" style="color:red;"></p>
+    <p>Khoa: <input type="text" th:field="*{khoa}" /></p>
+    <p th:if="${#fields.hasErrors('khoa')}" th:errors="*{khoa}" style="color:red;"></p>
+    <p><button type="submit">Submit</button></p>
+</form>
+</body>
+</html>

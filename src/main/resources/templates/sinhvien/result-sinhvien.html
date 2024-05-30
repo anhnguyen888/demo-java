@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kết quả</title>
+</head>
+<body>
+<h1 th:text="${message}"></h1>
+<table border="1">
+    <tr>
+        <th>Tên</th>
+        <th>Tuổi</th>
+        <th>Khoa</th>
+    </tr>
+    <tr>
+        <td th:text="${sinhVien.ten}">Tên</td>
+        <td th:text="${sinhVien.tuoi}">Tuổi</td>
+        <td th:text="${sinhVien.khoa}">Khoa</td>
+    </tr>
+</table>
+</body>
+</html>
