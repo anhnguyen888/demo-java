@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head>
+  <meta charset="UTF-8">
+  <th:block th:replace="layout :: link-css"></th:block>
+  <title>Edit Book</title>
+</head>
+<body>
+<div id="templatemo_container">
+  <th:block th:replace="layout :: header"></th:block>
+  <div id="templatemo_content">
+
+    <th:block th:replace="layout :: content_left"></th:block>
+
+    <div id="templatemo_content_right">
+<div class="container">
+  <h1>Edit Book</h1>
+  <form th:action="@{/edit-book}" th:object="${book}" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{id}">
+    <div class="group">
+      <label class="form-label" for="title">Title:</label>
+      <input type="text" class="form-control" id="title" th:field="*{title}">
+      <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-bg-warning" style="color: #bb2d3b; font-weight: bold"></span>
+    </div>
+    <div class="group">
+      <label class="form-label" for="images">Các ảnh của sách:</label>
+      <div th:each="image : ${images}">
+        <img th:src="@{${image.image}}" width="100px" height="100px" />
+        <a th:href="@{/delete-image/{id}(id=${image.id})}" class="btn btn-sm btn-danger">Delete</a>
+        <span th:if = "${image.isView} != true">
+          <a th:href="@{/set-view-image/{id}(id=${image.id})}" class="btn btn-sm btn-secondary">Set View</a>
+        </span>
+
+
+      </div>
+      <input type="file" class="form-control" id="images" name="imageList" multiple accept="image/*">
+    </div>
+    <div class="group">
+      <label class="form-label" for="category">Category:</label>
+      <select class="form-control" id="category" name="category.id" >
+        <option value="">Select Category</option>
+        <option th:each="category : ${categories}" th:selected="${category.id==selected}" th:value="${category.id}" th:text="${category.name}"></option>
+      </select>
+      <!--      <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-bg-warning"></span>-->
+    </div>
+    <input type="submit" class="btn btn-primary" value="Save">
+  </form>
+  <br>
+  <a th:href="@{/books}" class="btn btn-primary">Back</a>
+</div>
+    </div> <!-- end of content right -->
+
+    <div class="cleaner_with_height">&nbsp;</div>
+  </div>
+<th:block th:include="layout :: footer"></th:block>
+    </div>
+</body>
+</html>

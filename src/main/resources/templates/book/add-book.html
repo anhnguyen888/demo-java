@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <th:block th:replace="layout :: link-css"></th:block>
+  <title>Add Book</title>
+</head>
+<body>
+<div id="templatemo_container">
+<th:block th:replace="layout :: header"></th:block>
+  <div id="templatemo_content">
+
+    <th:block th:replace="layout :: content_left"></th:block>
+
+    <div id="templatemo_content_right">
+<div class="container">
+  <h1>Add Book</h1>
+  <form th:action="@{/add-book}" th:object="${book}" method="post"  enctype="multipart/form-data">
+      <input type="text" class="form-control" id="id" th:field="*{id}" hidden>
+    <div class="group">
+      <label class="form-label" for="title">Title:</label>
+      <input type="text" class="form-control" id="title" th:field="*{title}">
+      <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-bg-warning" style="color: #bb2d3b; font-weight: bold"></span>
+    </div>
+    <!-- <div class="group">
+      <label class="form-label" for="images" >Chọn Ảnh: </label>
+      <input type="file" id="images" name="imageList" multiple accept="image/*" />
+    </div> -->
+    <div class="group">
+      <label class="form-label" for="category">Category:</label>
+      <select class="form-control" id="category" name="category.id" >
+        <option value="">Select Category</option>
+        <option th:each="category : ${categories}" th:selected="${category.id==selected}" th:value="${category.id}" th:text="${category.name}"></option>
+      </select>
+      <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-bg-warning" style="color: #bb2d3b; font-weight: bold"></span>
+    </div>
+    <input type="submit" class="btn btn-primary" value="Save">
+  </form>
+  <br>
+  <a th:href="@{/books}" class="btn btn-primary">Back</a>
+</div>
+    </div> <!-- end of content right -->
+
+    <div class="cleaner_with_height">&nbsp;</div>
+  </div>
+<th:block th:replace="layout :: footer"></th:block>
+  </div> <!-- end of content -->
+</body>
+</html>

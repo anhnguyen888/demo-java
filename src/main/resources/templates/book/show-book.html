@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http:www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <th:block th:insert="layout :: link-css"></th:block>
+</head>
+<body>
+<div id="templatemo_container">
+  <th:block th:replace="layout :: header"></th:block>
+  <div id="templatemo_content">
+
+    <th:block th:replace="layout :: content_left"></th:block>
+
+    <div id="templatemo_content_right">
+      <div th:each="book, status : ${books}">
+        <div class="templatemo_product_box" >
+          <h1 th:text="${book.title}">  </h1>
+          <div th:each="image, countImg : ${images}">
+            <div th:if = "${image.book.id} == ${book.id}">
+              <div th:if = "${image.isView} == true">
+                <img th:src="@{${image.image}}" alt="image" style="height: 150px; width: 100px;"/>
+              </div>
+            </div>
+          </div>
+          <div class="product_info">
+            <p th:text="${book.title}"></p>
+            <h3>$55</h3>
+            <div class="buy_now_button" sec:authorize="hasAnyAuthority('ADMIN')"><a th:href="@{/delete-book/{id}(id=${book.id})}">Buy Now</a></div>
+            <div class="detail_button" sec:authorize="hasAnyAuthority('ADMIN')"><a th:href="@{/edit-book/{id}(id=${book.id})}">Detail</a></div>
+            <form method="post" action="/cart/add">
+              <input type="submit" value="Add Cart" class="btn btn-success" />
+                <input type="hidden" name="productName" th:value="${book.title}">
+                <input type="hidden" name="productId" th:value="${book.id}">
+            </form>
+          </div>
+
+          <div class="cleaner">&nbsp;</div>
+        </div>
+
+        <!--      if book.id %2 == 0 class cleaner_with_width-->
+        <!--      else class cleaner_with_height-->
+        <div th:if="${book.id %2 != 0}" class="cleaner_with_width">&nbsp;</div>
+        <div th:unless="${book.id %2 != 0}" class="cleaner_with_height">&nbsp;</div>
+      </div>
+      <a href="home/subpage.html"><img src="/images/templatemo_ads.jpg" alt="ads" /></a>
+    </div> <!-- end of content right -->
+
+    <div class="cleaner_with_height">&nbsp;</div>
+  </div> <!-- end of content -->
+  <th:block th:replace="layout :: footer"></th:block>
+</div>
+
+
+
+
+
+<!--<div class="container">-->
+<!--  <h1 th:text=${title}></h1>-->
+<!--  <table class="table">-->
+<!--    <tr>-->
+<!--      <th>ID</th>-->
+<!--      <th>Title</th>-->
+<!--        <th>Image</th>-->
+<!--    </tr>-->
+<!--    <tr th:each="book : ${book}">-->
+<!--        <td th:text="${book.id}"></td>-->
+<!--      <td th:text="${book.title}"></td>-->
+<!--      <td ><img th:src="@{${book.image}}" alt="image"></td>-->
+<!--      <td>-->
+<!--        <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn btn-primary">Edit</a>-->
+<!--        <a th:href="@{/books/delete/{id}(id=${book.id})}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>-->
+<!--      </td>-->
+<!--    </tr>-->
+<!--  </table>-->
+<!--</div>-->
+</body>
+</html>
