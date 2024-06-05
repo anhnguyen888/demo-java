@@ -77,6 +77,89 @@ public class CategoryController {
         return fileName;
     }
 
+    @PostMapping("/add-book")
+    public String processAddBookForm(@Valid @ModelAttribute("book") Book book, BindingResult result, @RequestParam("imageList") MultipartFile[] images, Model model ) throws IOException {
+        if (result.hasErrors()) {
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("selected", book.getCategory().getId());
+            return "book/add-book";
+        } else {
+            bookService.addBook(book);
+            for (MultipartFile image : images) {
+                if (!image.isEmpty()) {
+                    try {
+                        String imageUrl = saveImage(image);
+                        Image bookImage = new Image();
+                        if (book.getImages().isEmpty()) {
+                            bookImage.setView(true);
+                        }
+                        bookImage.setImage("/images/" +imageUrl);
+                        bookImage.setBook(book);
+                        book.getImages().add(bookImage);
+                        bookService.addImage(bookImage);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        // Handle image upload error
+                    }
+                }
+            }
+
+            return "redirect:/books";
+        }
+    }
+
+    private String saveImage(MultipartFile image) throws IOException {
+        File saveFile = new ClassPathResource("static/images").getFile();
+            String fileName = UUID.randomUUID()+ "." + StringUtils.getFilenameExtension(image.getOriginalFilename());
+            Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + fileName);
+            Files.copy(image.getInputStream(), path);
+            return fileName;
+    }
+
+    @GetMapping("/edit-book/{id}")
+    public String showFormEditBook(@PathVariable int id, Model model) {
+        Book book = bookService.getBookById(id);
+        model.addAttribute("book", book);
+        model.addAttribute("selected", book.getCategory().getId());
+        model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("images", bookService.getImageByBookId(id));
+        return "book/edit-book";
+    }
+    @PostMapping("/edit-book")
+    public String processEditBookForm(@Valid @ModelAttribute("book") Book book, BindingResult result, @RequestParam("imageList") MultipartFile[] images, Model model )throws IOException{
+        if (result.hasErrors()) {
+            model.addAttribute("selected", book.getCategory().getId());
+            model.addAttribute("categories", categoryService.getAllCategories());
+            model.addAttribute("images", bookService.getImageByBookId(book.getId()));
+            return "book/edit-book";
+        } else {
+            for (MultipartFile image : images) {
+                if (!image.isEmpty()) {
+                    try {
+                        String imageUrl = saveImage(image);
+
+                        // Create book image entity and associate it with the bookl
+                        Image bookImage = new Image();
+                        bookImage.setImage("/images/" +imageUrl);
+                        bookImage.setBook(book);
+                        book.getImages().add(bookImage);
+                        bookService.addImage(bookImage);
+                        book.setImages(bookService.getBookById(book.getId()).getImages());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        // Handle image upload error
+                    }
+                }
+                else {
+                    book.setImages(bookService.getBookById(book.getId()).getImages());
+                }
+            }
+            bookService.saveBook(book);
+            return "redirect:/books";
+        }
+    }
+    
+
     //code mau them nhieu hinh anh
     
     @PostMapping("/add-book")
